@@ -25,11 +25,103 @@ CHAR_INFO consoleBufferC[WIDTHz * HEIGHTz];
 CHAR_INFO consoleBufferD[WIDTHz * HEIGHTz];
 CHAR_INFO consoleBufferE[WIDTHz * HEIGHTz];
 CHAR_INFO consoleBufferF[WIDTHz * HEIGHTz];
+
+char stk_error( const char *prompt,int zx,int zy)
+  {
+      
+  DWORD        mode;
+  HANDLE       hstdin;//HANDLE wHnd;
+  INPUT_RECORD inrec;
+  DWORD        count;
+  char         default_prompt[] = "Press the 'any' key...";
+  char         result           = '\0';
+  int xd;
+    CHAR_INFO consoleBuffer[20];SMALL_RECT consoleWriteAreaI = {50, zx, 72, zy};COORD characterBufferSize = {20,1};
+    COORD characterPosition = {0,0};CHAR_INFO consoleBufferI[20];
+  if (!prompt) prompt = default_prompt;
+  for(xd=0;xd<19;xd++)
+  {
+      consoleBufferI[xd].Char.AsciiChar = prompt[xd];consoleBufferI[xd].Attributes =  263;
+      
+  }
+   WriteConsoleOutput(
+    GetStdHandle( STD_OUTPUT_HANDLE ),
+    consoleBufferI,
+    characterBufferSize,
+    characterPosition ,
+    &consoleWriteAreaI
+    );
+  }  
+    
+char pressanykey( const char *prompt,int xx,int yy)
+  {
+  DWORD        mode;
+  HANDLE       hstdin;//HANDLE wHnd;
+  INPUT_RECORD inrec;
+  DWORD        count;
+  char         default_prompt[] = "Press the 'any' key...";
+  char         result           = '\0';
+  int xd;
+    CHAR_INFO consoleBuffer[20];SMALL_RECT consoleWriteArea = {100, xx, 112, yy};COORD characterBufferSize = {68,1};
+    COORD characterPosition = {0,0};
+    SMALL_RECT consoleWriteAreaG = {50, xx, 102, yy};
+    SMALL_RECT consoleWriteAreaH = {50, 11, 70, 13};
+    CHAR_INFO consoleBufferG[69];CHAR_INFO consoleBufferH[20];
+  /* Set the console mode to no-echo, raw input, */
+  /* and no window or mouse events.              */
+  hstdin = GetStdHandle( STD_INPUT_HANDLE );
+  if (hstdin == INVALID_HANDLE_VALUE
+  || !GetConsoleMode( hstdin, &mode )
+  || !SetConsoleMode( hstdin, 0 ))
+    return result;
+
+  if (!prompt) prompt = default_prompt;
+  for(xd=0;xd<58;xd++)
+  {
+      consoleBufferG[xd].Char.AsciiChar = prompt[xd];consoleBufferG[xd].Attributes =  263;
+      
+  }
+
+  /* Instruct the user */
+  WriteConsoleOutput(
+    GetStdHandle( STD_OUTPUT_HANDLE ),
+    consoleBufferG,
+    characterBufferSize,
+    characterPosition ,
+    &consoleWriteAreaG
+    );
+
+  FlushConsoleInputBuffer( hstdin );
+  for(xd=0;xd<15;xd++)
+  {
+      
+  /* Wait for and get a single key PRESS */
+  do ReadConsoleInput( hstdin, &inrec, 1, &count );
+  while ((inrec.EventType != KEY_EVENT) || !inrec.Event.KeyEvent.bKeyDown);
+
+  /* Remember which key the user pressed */
+  result = inrec.Event.KeyEvent.uChar.AsciiChar;
+  
+  consoleBuffer[xd].Char.AsciiChar = result;consoleBuffer[xd].Attributes =  264;
+  /* Wait for and get a single key RELEASE */
+  do ReadConsoleInput( hstdin, &inrec, 1, &count );
+  
+  while ((inrec.EventType != KEY_EVENT) || inrec.Event.KeyEvent.bKeyDown);
+  //WriteConsoleOutput(wHnd, consoleBuffer, characterBufferSize, characterPosition, &consoleWriteArea);
+  /* Restore the original console mode */
+  WriteConsoleOutput(GetStdHandle( STD_OUTPUT_HANDLE ), consoleBuffer,characterBufferSize,characterPosition , &consoleWriteArea);
+  }
+  
+  SetConsoleMode( hstdin, mode );
+
+  return result;
+  }
+
 void look()
 {
-  int x,i;bool  done = FALSE; int * address;
-  char *d = &(line_4[0]);char *e;
-  std::string s;
+  int long x,i;bool  done = FALSE; int long * address;
+  char *d = &(line_4[0]);char *e;char *y;
+  std::string s,s2;
   std::stringstream out;
   out << d;
   s = out.str();
@@ -37,22 +129,35 @@ void look()
   COORD characterPosition = {0, 0};
   SMALL_RECT consoleWriteArea = {100, 5, 112, 7};
   SMALL_RECT consoleWriteAreaB = {100, 3, 112, 5};
+  SMALL_RECT consoleWriteAreaC = {100, 7, 112, 9};
   CHAR_INFO consoleBuffer[WIDTHz * HEIGHTz];
-  CHAR_INFO consoleBufferB[WIDTHz * HEIGHTz];address = &i;
+  CHAR_INFO consoleBufferB[WIDTHz * HEIGHTz];
+  CHAR_INFO consoleBufferC[WIDTHz * HEIGHTz];
+  address = &i;
   for (x = 0; x < 7; ++x){
       
   consoleBuffer[x].Char.AsciiChar = *d;consoleBuffer[x].Attributes =  225;d++;} 
   while(!done){
   WriteConsoleOutput(wHnd, consoleBuffer, characterBufferSize, characterPosition, &consoleWriteArea); 
+  
+  if(GetAsyncKeyState(VK_DOWN))
+  pressanykey("begin debugging ::::: enter machine code here===>",11,13);stk_error("xxxx xxxxxxxxxx",15,17);
+  if(GetAsyncKeyState(VK_UP))
+  pressanykey("debugging FAILED :::: enter machine code here===>",13,15);stk_error("STACK OVERFLOW",15,17);
   if(GetAsyncKeyState(VK_RIGHT))
     {d++;Sleep(60);e=d;
-     for (x = 0; x < 12; ++x){
+     for (x = 0; x < 13; ++x){
          
         std::stringstream out;out << address;s = out.str(); 
        consoleBufferB[x].Char.AsciiChar = s[x];consoleBufferB[x].Attributes =  225;address++;
-       consoleBuffer[x].Char.AsciiChar = *e;consoleBuffer[x].Attributes =  225;e++;}
+       consoleBuffer[x].Char.AsciiChar = *e;consoleBuffer[x].Attributes =  225;e++;stk_error("xxxx XXXX xxxxxx",15,17);
+       //if(x>3 && x<10){
+       std::stringstream out2;out2 << *d;s2 = out2.str(); 
+       consoleBufferC[x].Char.AsciiChar = s2[x];consoleBufferC[x].Attributes =  225;//}//
+       }
         WriteConsoleOutput(wHnd, consoleBuffer, characterBufferSize, characterPosition, &consoleWriteArea);
         WriteConsoleOutput(wHnd, consoleBufferB, characterBufferSize, characterPosition, &consoleWriteAreaB);
+        WriteConsoleOutput(wHnd, consoleBufferC, characterBufferSize, characterPosition, &consoleWriteAreaC);
         }
    if(GetAsyncKeyState(VK_LEFT))
     {d--;Sleep(60);e=d;
