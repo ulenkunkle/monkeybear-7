@@ -26,7 +26,7 @@ CHAR_INFO consoleBufferD[WIDTHz * HEIGHTz];
 CHAR_INFO consoleBufferE[WIDTHz * HEIGHTz];
 CHAR_INFO consoleBufferF[WIDTHz * HEIGHTz];
 
-char stk_error( const char *prompt,int zx,int zy)
+char stk_error( const char *prompt,int zx,int zy,int ab,int xc)
   {
       
   DWORD        mode;
@@ -36,7 +36,7 @@ char stk_error( const char *prompt,int zx,int zy)
   char         default_prompt[] = "Press the 'any' key...";
   char         result           = '\0';
   int xd;
-    CHAR_INFO consoleBuffer[20];SMALL_RECT consoleWriteAreaI = {50, zx, 72, zy};COORD characterBufferSize = {20,1};
+    CHAR_INFO consoleBuffer[20];SMALL_RECT consoleWriteAreaI = {ab, zx, xc, zy};COORD characterBufferSize = {20,1};
     COORD characterPosition = {0,0};CHAR_INFO consoleBufferI[20];
   if (!prompt) prompt = default_prompt;
   for(xd=0;xd<19;xd++)
@@ -141,19 +141,19 @@ void look()
   WriteConsoleOutput(wHnd, consoleBuffer, characterBufferSize, characterPosition, &consoleWriteArea); 
   
   if(GetAsyncKeyState(VK_DOWN))
-  pressanykey("begin debugging ::::: enter machine code here===>",11,13);stk_error("xxxx xxxxxxxxxx",15,17);
+  pressanykey("begin debugging ::::: enter machine code here===>",11,13);stk_error("xxxx xxxxxxxxxx",15,17,50,73);
   if(GetAsyncKeyState(VK_UP))
-  pressanykey("debugging FAILED :::: enter machine code here===>",13,15);stk_error("STACK OVERFLOW",15,17);
+  pressanykey("debugging FAILED :::: enter machine code here===>",13,15);stk_error("STACK OVERFLOW",15,17,50,72);
   if(GetAsyncKeyState(VK_RIGHT))
     {d++;Sleep(60);e=d;
      for (x = 0; x < 13; ++x){
          
         std::stringstream out;out << address;s = out.str(); 
        consoleBufferB[x].Char.AsciiChar = s[x];consoleBufferB[x].Attributes =  225;address++;
-       consoleBuffer[x].Char.AsciiChar = *e;consoleBuffer[x].Attributes =  225;e++;stk_error("xxxx XXXX xxxxxx",15,17);
+       consoleBuffer[x].Char.AsciiChar = *e;consoleBuffer[x].Attributes =  225;e++;stk_error("xxxx XXXX xx",15,17,20,50);
        //if(x>3 && x<10){
        std::stringstream out2;out2 << *d;s2 = out2.str(); 
-       consoleBufferC[x].Char.AsciiChar = s2[x];consoleBufferC[x].Attributes =  225;//}//
+       consoleBufferC[x].Char.AsciiChar = s2[x];consoleBufferC[x].Attributes =  225;stk_error("***WARNING***",13,15,20,50);
        }
         WriteConsoleOutput(wHnd, consoleBuffer, characterBufferSize, characterPosition, &consoleWriteArea);
         WriteConsoleOutput(wHnd, consoleBufferB, characterBufferSize, characterPosition, &consoleWriteAreaB);
@@ -310,7 +310,7 @@ int main(int argc, char * argv[])
    scroll(line_6);printf("\n...sorry sir,,,Ship destroyed by Klingons Borg and Romulans goodbye Captain Dunsill,,, ");getchar();
    printf("\n...wait,,,wait im getting a message,,,ships computer in error ,,, battle bridge remains... \n");
    printf(".. you must get computers back online to survive,,,start with hacking the output buffers\n");
-   printf(".. use the right and left arrows to show contents of buffer here(careful of stackdumps)----->");
+   printf(".. use the arrow keys(up/down/rt/lf)to show contents of buffer here(careful of stackdumps)----->");
    getchar();scroll(line_6);look();
    getchar();
 }
