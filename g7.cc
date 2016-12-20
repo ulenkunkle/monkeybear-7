@@ -157,7 +157,7 @@ char pressanykey( const char *prompt,int xx,int yy)
 
 void look()
 {
-  int long x,i;bool  done = FALSE; int long * address;
+  int long x,i;bool  done = FALSE; int long * address;char mastermind[13];
   char *d = &(line_4[0]);char *e;char *y;
   std::string s,s2;
   std::stringstream out;
@@ -186,7 +186,7 @@ void look()
     {d++;Sleep(60);e=d;
      for (x = 0; x < 13; ++x){
          
-        std::stringstream out;out << address;s = out.str(); 
+        std::stringstream out;out << address;s = out.str();mastermind[x] =s[x];printf( " mastermind  Guess  %s",mastermind);std::cout<<mastermind;
        consoleBufferB[x].Char.AsciiChar = s[x];consoleBufferB[x].Attributes =  225;address++;
        consoleBuffer[x].Char.AsciiChar = *e;consoleBuffer[x].Attributes =  225;e++;stk_error("xxxx XXXX xx",15,17,20,50);
        //if(x>3 && x<10){
